@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+from django.db import models
 
 SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = os.environ['DEBUG'] == True
@@ -15,6 +16,7 @@ STATIC_URL = '/static/'
 # Application definition
 
 INSTALLED_APPS = [
+    'comments.apps.CommentsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -59,16 +61,17 @@ WSGI_APPLICATION = 'commenti_server.wsgi.application'
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE':   'django.db.backends.postgresql',
-    #     'NAME':     os.environ['DATABASE_NAME'],
-    #     'USER':     os.environ['DATABASE_USER'],
-    #     'PASSWORD': os.environ['DATABASE_PASSWORD'],
-    #     'HOST':     os.environ['DATABASE_HOST'],
-    #     'PORT': int(os.environ['DATABASE_PORT']),
-    # }
+    'default': {
+        'ENGINE':   'django.db.backends.postgresql',
+        'NAME':     os.environ['DATABASE_NAME'],
+        'USER':     os.environ['DATABASE_USER'],
+        'PASSWORD': os.environ['DATABASE_PASSWORD'],
+        'HOST':     os.environ['DATABASE_HOST'],
+        'PORT': int(os.environ['DATABASE_PORT']),
+    }
 }
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
