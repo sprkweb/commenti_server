@@ -3,7 +3,7 @@ import os
 from django.db import models
 
 SECRET_KEY = os.environ['SECRET_KEY']
-DEBUG = os.environ['DEBUG'] == True
+DEBUG = os.environ['DEBUG'] == 'True'
 ALLOWED_HOSTS = [os.environ['ALLOWED_HOST']]
 
 

@@ -27,7 +27,7 @@ class Comment(models.Model):
     # TODO: parent comment
 
     def __str__(self) -> str:
-        return _('From %(user), %(date)') % {
+        return _('From %(user)s, %(date)s') % {
             'user': self.author,
             'date': self.date_created
         }
