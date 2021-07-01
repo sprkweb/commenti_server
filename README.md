@@ -7,12 +7,13 @@ Configure environment variables (you can create an .env file):
 ```code
 DEBUG=True
 SECRET_KEY='my-secure-secret-key'
-ALLOWED_HOST=myhost
-DATABASE_NAME=dbname
-DATABASE_USER=dbuser
-DATABASE_PASSWORD=dbpass
-DATABASE_HOST=host
-DATABASE_PORT=1234
+ALLOWED_HOST=*
+CORS_ALLOWED_ORIGIN_REGEX='^.*$'
+DATABASE_NAME=postgres
+DATABASE_USER=postgres
+DATABASE_PASSWORD=123
+DATABASE_HOST=localhost
+DATABASE_PORT=5432
 ```
 
 Install dependecies:

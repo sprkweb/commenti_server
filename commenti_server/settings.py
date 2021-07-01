@@ -13,6 +13,11 @@ STATIC_ROOT = BASE_DIR.parent / 'static'
 STATIC_URL = '/static/'
 
 
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    os.environ['CORS_ALLOWED_ORIGIN_REGEX']
+]
+CORS_URLS_REGEX = r'^/graphql/?$'
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -24,9 +29,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'graphene_django',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
