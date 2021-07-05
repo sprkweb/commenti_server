@@ -31,3 +31,7 @@ class Comment(models.Model):
             'user': self.author,
             'date': self.date_created
         }
+
+    class Meta:
+        verbose_name = _('Comment')
+        verbose_name_plural = _('Comments')
