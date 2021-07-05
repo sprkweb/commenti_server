@@ -26,9 +26,8 @@ class CommentGQLType(graphene_django.DjangoObjectType):
         )
 
 class Query(graphene.ObjectType):
-    # TODO: temporary query
-    all_comments = graphene.List(CommentGQLType)
-    def resolve_all_comments(root, info):
-        return Comment.objects.all()
+    comments = graphene.List(CommentGQLType, page=graphene.String())
+    def resolve_comments(root, info, page):
+        return Comment.objects.filter(page=page)
 
 schema = graphene.Schema(query=Query)

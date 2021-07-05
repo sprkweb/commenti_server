@@ -2,6 +2,22 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 
+class Page(models.Model):
+    id = models.CharField(
+        _('Unique ID'),
+        max_length=32,
+        primary_key=True)
+
+    def __str__(self) -> str:
+        return _('Page %(id)s') % {
+            'id': self.id
+        }
+
+    class Meta:
+        verbose_name = _('Page')
+        verbose_name_plural = _('Pages')
+
+
 class Comment(models.Model):
     text = models.TextField(_('Text'))
 
@@ -23,8 +39,14 @@ class Comment(models.Model):
         editable=False
     )
 
-    # TODO: unique page id
     # TODO: parent comment
+
+    page = models.ForeignKey(
+        Page,
+        verbose_name=_('Page'),
+        on_delete=models.CASCADE,
+        related_name='comments'
+    )
 
     def __str__(self) -> str:
         return _('From %(user)s, %(date)s') % {
