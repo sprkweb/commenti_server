@@ -39,13 +39,20 @@ class Comment(models.Model):
         editable=False
     )
 
-    # TODO: parent comment
-
     page = models.ForeignKey(
         Page,
         verbose_name=_('Page'),
         on_delete=models.CASCADE,
         related_name='comments'
+    )
+
+    parent = models.ForeignKey(
+        'self',
+        verbose_name=_('Parent comment'),
+        on_delete=models.CASCADE,
+        related_name='children',
+        null=True,
+        blank=True
     )
 
     def __str__(self) -> str:

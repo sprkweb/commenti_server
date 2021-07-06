@@ -1,4 +1,5 @@
 import graphene
+from graphene import relay
 import graphene_django
 
 from django.contrib.auth.models import User
@@ -14,20 +15,25 @@ class UserGQLType(graphene_django.DjangoObjectType):
             'last_name'
         )
 
-class CommentGQLType(graphene_django.DjangoObjectType):
+class CommentGQLNode(graphene_django.DjangoObjectType):
     class Meta:
         model = Comment
         fields = (
-            'id',
             'text',
             'author',
             'date_created',
-            'date_edited'
+            'date_edited',
+            'parent',
+            'children'
         )
+        interfaces = (relay.Node, )
 
 class Query(graphene.ObjectType):
-    comments = graphene.List(CommentGQLType, page=graphene.String())
-    def resolve_comments(root, info, page):
-        return Comment.objects.filter(page=page)
+    comment = relay.Node.Field(CommentGQLNode)
+
+    comments = graphene_django.DjangoConnectionField(CommentGQLNode, page=graphene.String())
+    def resolve_comments(root, info, page, **args):
+        return Comment.objects.filter(page=page, parent=None)
+
 
 schema = graphene.Schema(query=Query)
