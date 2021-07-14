@@ -1,0 +1,9 @@
+# Ignore everything
+**
+
+# Allow these
+!/commenti_server/**
+!/comments/**
+!/manage.py
+!/Pipfile
+!/Pipfile.lock

@@ -1,20 +1,31 @@
 # Commenti Server
 
-## How to run
+## How to run (using docker-compose)
 
-Configure environment variables (you can create an .env file):
+Configure environment variables:
 
-```code
-DEBUG=True
-SECRET_KEY='my-secure-secret-key'
-ALLOWED_HOST=*
-CORS_ALLOWED_ORIGIN_REGEX='^.*$'
-DATABASE_NAME=postgres
-DATABASE_USER=postgres
-DATABASE_PASSWORD=123
-DATABASE_HOST=localhost
-DATABASE_PORT=5432
+```sh
+cp .env.example .env
+cp .env.postgres.example .env.postgres
 ```
+
+Edit the `.env` and `.env.postgres` files.
+
+Then start docker-compose:
+
+```sh
+docker-compose up
+```
+
+## How to run (for development)
+
+Configure environment variables:
+
+```sh
+cp .env.example .env
+```
+
+Edit the `.env` file in order to connect to a development database (PostgreSQL).
 
 Install dependecies:
 
@@ -22,4 +33,10 @@ Install dependecies:
 python -m pip install pipenv
 pipenv install
 pipenv shell
+```
+
+Run server:
+
+```sh
+./manage.py runserver
 ```

@@ -2,21 +2,24 @@ from pathlib import Path
 import os
 from django.db import models
 
-SECRET_KEY = os.environ['SECRET_KEY']
-DEBUG = os.environ['DEBUG'] == 'True'
-ALLOWED_HOSTS = [os.environ['ALLOWED_HOST']]
+SECRET_KEY = os.environ.get('SECRET_KEY', 'my-secure-secret-key')
+DEBUG = os.environ.get('DEBUG', 'false').lower() == 'true'
+ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOST', '*')]
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-STATIC_ROOT = BASE_DIR.parent / 'static'
+STATIC_ROOT = os.environ.get('STATIC_ROOT', BASE_DIR.parent / 'static')
 
 STATIC_URL = '/static/'
 
 
 CORS_ALLOWED_ORIGIN_REGEXES = [
-    os.environ['CORS_ALLOWED_ORIGIN_REGEX']
+    os.environ.get('CORS_ALLOWED_ORIGIN_REGEX', '^.*$')
 ]
 CORS_URLS_REGEX = r'^/graphql/?$'
+
+# SQLite isn't recommended, this option is for CI/CD
+DATABASE = os.environ.get('DATABASE', 'sqlite3')
 
 # Application definition
 
@@ -67,16 +70,26 @@ WSGI_APPLICATION = 'commenti_server.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE':   'django.db.backends.postgresql',
-        'NAME':     os.environ['DATABASE_NAME'],
-        'USER':     os.environ['DATABASE_USER'],
-        'PASSWORD': os.environ['DATABASE_PASSWORD'],
-        'HOST':     os.environ['DATABASE_HOST'],
-        'PORT': int(os.environ['DATABASE_PORT']),
+if DATABASE == 'sqlite3':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': 'database',
+        }
     }
-}
+elif DATABASE == 'postgresql':
+    DATABASES = {
+        'default': {
+            'ENGINE':   'django.db.backends.postgresql',
+            'NAME':     os.environ['DATABASE_NAME'],
+            'USER':     os.environ['DATABASE_USER'],
+            'PASSWORD': os.environ['DATABASE_PASSWORD'],
+            'HOST':     os.environ['DATABASE_HOST'],
+            'PORT': int(os.environ['DATABASE_PORT']),
+        }
+    }
+else:
+    raise RuntimeError('Invalid Django database configuration')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
