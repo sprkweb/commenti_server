@@ -37,8 +37,8 @@ COPY --chown=worker:worker . /home/worker
 
 RUN pipenv run ./manage.py collectstatic --noinput
 
-# TODO: initialization on first run: migrate, superuser, possibly fixtures
 
+ENTRYPOINT ["/home/worker/docker-entrypoint.sh"]
 CMD ["pipenv", "run", \
     "gunicorn", \
     "--bind", "0.0.0.0:8000", \

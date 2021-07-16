@@ -7,3 +7,9 @@
 !/manage.py
 !/Pipfile
 !/Pipfile.lock
+!/docker-entrypoint.sh
+
+# Exceptions
+**/__pycache__
+*.pyc
+
