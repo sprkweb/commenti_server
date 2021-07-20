@@ -71,6 +71,10 @@ class Query(graphene.ObjectType):
     def resolve_comments(root, info, page, **args):
         return Comment.objects.filter(page=page, parent=None)
 
+    current_user = graphene.Field(UserGQLType)
+    def resolve_current_user(root, info):
+        return info.context.user
+
 class Mutation(graphene.ObjectType):
     login = GQLLogin.Field()
     logout = GQLLogout.Field()
