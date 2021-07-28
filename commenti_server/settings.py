@@ -1,6 +1,6 @@
 from pathlib import Path
 import os
-from django.db import models
+from datetime import timedelta
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'my-secure-secret-key')
 DEBUG = os.environ.get('DEBUG', 'false').lower() == 'true'
@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'graphene_django',
     'corsheaders',
+    'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
 ]
 
 MIDDLEWARE = [
@@ -111,6 +112,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'graphql_jwt.backends.JSONWebTokenBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
@@ -124,5 +129,18 @@ USE_TZ = True
 
 # GraphQL
 GRAPHENE = {
-    "SCHEMA": "commenti_server.schema.schema"
+    "SCHEMA": "commenti_server.schema.schema",
+    'MIDDLEWARE': [
+        'graphql_jwt.middleware.JSONWebTokenMiddleware',
+    ],
+}
+
+GRAPHQL_JWT = {
+    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+    'JWT_VERIFY_EXPIRATION': True,
+    'JWT_LONG_RUNNING_REFRESH_TOKEN': True,
+    'JWT_EXPIRATION_DELTA': timedelta(minutes=os.environ.get('ACCESS_TOKEN_EXPIRATION_MINUTES', 5)),
+    'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=os.environ.get('REFRESH_TOKEN_EXPIRATION_DAYS', 90)),
+    'JWT_SECRET_KEY': SECRET_KEY,
+    'JWT_ALGORITHM': 'HS256',
 }

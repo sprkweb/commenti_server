@@ -1,82 +1,63 @@
 import graphene
-from graphene import relay
 import graphene_django
-from django.core.exceptions import ValidationError
-from django.utils.translation import gettext_lazy as _
+import graphql_jwt
+from graphql_jwt.shortcuts import create_refresh_token, get_token
 from django.contrib import auth
-from django.contrib.auth.models import User
-from comments.models import Comment
 
-class UserGQLType(graphene_django.DjangoObjectType):
+import comments.schema
+
+class UserType(graphene_django.DjangoObjectType):
     class Meta:
-        model = User
+        model = auth.get_user_model()
         fields = (
             'id',
-            'username',
-            'first_name',
-            'last_name'
+            'username'
         )
 
-class CommentGQLNode(graphene_django.DjangoObjectType):
-    class Meta:
-        model = Comment
-        fields = (
-            'text',
-            'author',
-            'date_created',
-            'date_edited',
-            'parent',
-            'children'
-        )
-        interfaces = (relay.Node, )
+class ObtainJSONWebToken(graphql_jwt.JSONWebTokenMutation):
+    user = graphene.Field(UserType)
 
-class GQLLogin(graphene.Mutation):
+    @classmethod
+    def resolve(cls, root, info, **kwargs):
+        return cls(user=info.context.user)
+
+class CreateUser(graphene.Mutation):
     class Input:
         username = graphene.String(required=True)
         password = graphene.String(required=True)
+        email = graphene.String(required=True)
 
-    user = graphene.Field(UserGQLType)
+    user = graphene.Field(UserType)
+    token = graphene.String()
+    refresh_token = graphene.String()
 
-    @classmethod
-    def mutate(cls, root, info, username, password):
-        user = auth.authenticate(
-            info.context,
+    def mutate(self, info, username, password, email):
+        user = auth.get_user_model()(
             username=username,
-            password=password
+            email=email,
         )
-        if user is not None:
-            auth.login(info.context, user)
-            return GQLLogin(user=user)
-        else:
-            raise ValidationError(
-                _('Incorrect username or password'),
-                code='invalid login'
-            )
+        user.set_password(password)
+        user.save()
 
-class GQLLogout(graphene.Mutation):
-    class Input:
-        pass
+        return CreateUser(
+            user=user,
+            token=get_token(user),
+            refresh_token=create_refresh_token(user)
+        )
 
-    ok = graphene.Boolean()
-
-    @classmethod
-    def mutate(cls, root, info):
-        auth.logout(info.context)
-        return GQLLogout(ok=True)
-
-class Query(graphene.ObjectType):
-    comment = relay.Node.Field(CommentGQLNode)
-
-    comments = graphene_django.DjangoConnectionField(CommentGQLNode, page=graphene.String())
-    def resolve_comments(root, info, page, **args):
-        return Comment.objects.filter(page=page, parent=None)
-
-    current_user = graphene.Field(UserGQLType)
+class Query(comments.schema.Query, graphene.ObjectType):
+    current_user = graphene.Field(UserType)
     def resolve_current_user(root, info):
-        return info.context.user
+        user = info.context.user
+        if user.is_anonymous:
+            raise Exception('Authentication Failure: Your must be signed in')
+        return user
 
 class Mutation(graphene.ObjectType):
-    login = GQLLogin.Field()
-    logout = GQLLogout.Field()
+    token_auth = ObtainJSONWebToken.Field()
+    verify_token = graphql_jwt.Verify.Field()
+    refresh_token = graphql_jwt.Refresh.Field()
+    revoke_token = graphql_jwt.Revoke.Field()
+    create_user = CreateUser.Field()
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

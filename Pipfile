@@ -10,6 +10,7 @@ psycopg2-binary = "*"
 gunicorn = "*"
 graphene-django = "*"
 django-cors-headers = "*"
+django-graphql-jwt = "*"
 
 [dev-packages]
 
