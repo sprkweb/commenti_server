@@ -139,8 +139,8 @@ GRAPHQL_JWT = {
     'JWT_AUTH_HEADER_PREFIX': 'Bearer',
     'JWT_VERIFY_EXPIRATION': True,
     'JWT_LONG_RUNNING_REFRESH_TOKEN': True,
-    'JWT_EXPIRATION_DELTA': timedelta(minutes=os.environ.get('ACCESS_TOKEN_EXPIRATION_MINUTES', 5)),
-    'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=os.environ.get('REFRESH_TOKEN_EXPIRATION_DAYS', 90)),
+    'JWT_EXPIRATION_DELTA': timedelta(minutes=int(os.environ.get('ACCESS_TOKEN_EXPIRATION_MINUTES', 5))),
+    'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=int(os.environ.get('REFRESH_TOKEN_EXPIRATION_DAYS', 90))),
     'JWT_SECRET_KEY': SECRET_KEY,
     'JWT_ALGORITHM': 'HS256',
 }
