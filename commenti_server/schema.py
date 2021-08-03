@@ -53,7 +53,7 @@ class Query(comments.schema.Query, graphene.ObjectType):
             raise Exception('Authentication Failure: Your must be signed in')
         return user
 
-class Mutation(graphene.ObjectType):
+class Mutation(comments.schema.Mutation, graphene.ObjectType):
     token_auth = ObtainJSONWebToken.Field()
     verify_token = graphql_jwt.Verify.Field()
     refresh_token = graphql_jwt.Refresh.Field()
