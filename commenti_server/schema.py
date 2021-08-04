@@ -32,12 +32,10 @@ class CreateUser(graphene.Mutation):
     refresh_token = graphene.String()
 
     def mutate(self, info, username, password, email):
-        user = auth.get_user_model()(
-            username=username,
-            email=email,
+        user_model = auth.get_user_model()
+        user = user_model.objects.create_user(
+            username, email, password
         )
-        user.set_password(password)
-        user.save()
 
         return CreateUser(
             user=user,
