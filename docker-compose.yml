@@ -12,7 +12,7 @@ services:
     depends_on:
       - database
     environment:
-      - STATIC_ROOT=/static
+      - COMMENTI_STATIC_ROOT=/static
     volumes:
       - static:/static
 

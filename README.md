@@ -1,42 +1,50 @@
 # Commenti Server
 
-## How to run (using docker-compose)
+Back-end for [Commenti](https://github.com/sprkweb/commenti)
 
-Configure environment variables:
+## How to install
 
-```sh
-cp .env.example .env
-cp .env.postgres.example .env.postgres
-```
+### Option 1 (the easiest): Docker Compose
 
-Edit the `.env` and `.env.postgres` files.
+The easiest way to set this up is using docker-compose, which starts the back-end itself, nginx as a reverse proxy and a PostgreSQL database.
 
-Then start docker-compose:
+1. Create files with environment variables:
 
-```sh
-docker-compose up
-```
+    ```sh
+    cp .env.example .env
+    cp .env.postgres.example .env.postgres
+    ```
 
-## How to run (for development)
+2. Customize the `.env` and `.env.postgres` files.
+3. Then start docker-compose:
 
-Configure environment variables:
+    ```sh
+    docker-compose up
+    ```
 
-```sh
-cp .env.example .env
-```
+### Option 2: Without containers
 
-Edit the `.env` file in order to connect to a development database (PostgreSQL).
+This option is the best for development or in case if you want, for example, to use Commenti alongside with an existing database server and an HTTP server with your own configuration.
 
-Install dependecies:
+1. Configure environment variables:
 
-```sh
-python -m pip install pipenv
-pipenv install
-pipenv shell
-```
+    ```sh
+    cp .env.example .env
+    ```
 
-Run server:
+2. Edit the `.env` file in order to connect to a database (PostgreSQL).
+3. Install dependecies:
 
-```sh
-./manage.py runserver
-```
+    ```sh
+    python -m pip install pipenv
+    pipenv install
+    pipenv shell # this command enables virtual environment
+    ```
+
+4. Then you need to run your own HTTP server, for example, gunicorn + nginx (note: Commenti Server is powered by Django framework).
+
+    For development, run server using this command:
+
+    ```sh
+    ./manage.py runserver
+    ```

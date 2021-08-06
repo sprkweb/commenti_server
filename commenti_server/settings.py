@@ -2,24 +2,24 @@ from pathlib import Path
 import os
 from datetime import timedelta
 
-SECRET_KEY = os.environ.get('SECRET_KEY', 'my-secure-secret-key')
-DEBUG = os.environ.get('DEBUG', 'false').lower() == 'true'
-ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOST', '*')]
+SECRET_KEY = os.environ.get('COMMENTI_SECRET_KEY', 'my-secure-secret-key')
+DEBUG = os.environ.get('COMMENTI_DEBUG', 'false').lower() == 'true'
+ALLOWED_HOSTS = [os.environ.get('COMMENTI_ALLOWED_HOST', '*')]
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-STATIC_ROOT = os.environ.get('STATIC_ROOT', BASE_DIR.parent / 'static')
+STATIC_ROOT = os.environ.get('COMMENTI_STATIC_ROOT', BASE_DIR.parent / 'static')
 
 STATIC_URL = '/static/'
 
 
 CORS_ALLOWED_ORIGIN_REGEXES = [
-    os.environ.get('CORS_ALLOWED_ORIGIN_REGEX', '^.*$')
+    os.environ.get('COMMENTI_CORS_ALLOWED_ORIGIN_REGEX', '^.*$')
 ]
 CORS_URLS_REGEX = r'^/graphql/?$'
 
 # SQLite isn't recommended, this option is for CI/CD
-DATABASE = os.environ.get('DATABASE', 'sqlite3')
+DATABASE = os.environ.get('COMMENTI_DATABASE', 'sqlite3')
 
 # Application definition
 
@@ -82,11 +82,11 @@ elif DATABASE == 'postgresql':
     DATABASES = {
         'default': {
             'ENGINE':   'django.db.backends.postgresql',
-            'NAME':     os.environ['DATABASE_NAME'],
-            'USER':     os.environ['DATABASE_USER'],
-            'PASSWORD': os.environ['DATABASE_PASSWORD'],
-            'HOST':     os.environ['DATABASE_HOST'],
-            'PORT': int(os.environ['DATABASE_PORT']),
+            'NAME':     os.environ['COMMENTI_DATABASE_NAME'],
+            'USER':     os.environ['COMMENTI_DATABASE_USER'],
+            'PASSWORD': os.environ['COMMENTI_DATABASE_PASSWORD'],
+            'HOST':     os.environ['COMMENTI_DATABASE_HOST'],
+            'PORT': int(os.environ['COMMENTI_DATABASE_PORT']),
         }
     }
 else:
@@ -139,8 +139,8 @@ GRAPHQL_JWT = {
     'JWT_AUTH_HEADER_PREFIX': 'Bearer',
     'JWT_VERIFY_EXPIRATION': True,
     'JWT_LONG_RUNNING_REFRESH_TOKEN': True,
-    'JWT_EXPIRATION_DELTA': timedelta(minutes=int(os.environ.get('ACCESS_TOKEN_EXPIRATION_MINUTES', 5))),
-    'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=int(os.environ.get('REFRESH_TOKEN_EXPIRATION_DAYS', 90))),
+    'JWT_EXPIRATION_DELTA': timedelta(minutes=int(os.environ.get('COMMENTI_ACCESS_TOKEN_EXPIRATION_MINUTES', 5))),
+    'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=int(os.environ.get('COMMENTI_REFRESH_TOKEN_EXPIRATION_DAYS', 90))),
     'JWT_SECRET_KEY': SECRET_KEY,
     'JWT_ALGORITHM': 'HS256',
 }
