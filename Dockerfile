@@ -1,4 +1,5 @@
 FROM python:3.9-slim
+LABEL org.opencontainers.image.source https://github.com/sprkweb/commenti_server
 
 ### Environment configuration ###
 #################################
@@ -22,7 +23,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV PIP_NO_CACHE_DIR=false
 
-ENV STATIC_ROOT=/static
+ENV COMMENTI_STATIC_ROOT=/static
 
 RUN pip install --user pipenv==2020.11.15
 ENV PATH="/home/worker/.local/bin:${PATH}"
