@@ -51,7 +51,19 @@ This option is the best for development.
     pipenv shell # this command enables virtual environment
     ```
 
-5. For production, you need to run your own HTTP server, for example, gunicorn + nginx (note: Commenti Server is powered by Django framework).
+5. Create tables in the database:
+
+    ```sh
+    ./manage.py migrate
+    ```
+
+6. Create a superuser:
+
+    ```sh
+    ./manage.py createsuperuser
+    ```
+
+7. For production, you need to run your own HTTP server, for example, gunicorn + nginx (note: Commenti Server is powered by Django framework).
 
     For development, run server using this command:
 
