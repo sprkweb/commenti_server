@@ -25,7 +25,7 @@ DATABASE = os.environ.get('COMMENTI_DATABASE', 'sqlite3')
 
 INSTALLED_APPS = [
     'comments.apps.CommentsConfig',
-    'django.contrib.admin',
+    'commenti_server.apps.CommentiAdminConfig',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',

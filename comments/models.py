@@ -9,9 +9,7 @@ class Page(models.Model):
         primary_key=True)
 
     def __str__(self) -> str:
-        return _('Page %(id)s') % {
-            'id': self.id
-        }
+        return self.id
 
     class Meta:
         verbose_name = _('Page')
