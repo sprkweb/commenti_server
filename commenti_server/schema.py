@@ -1,18 +1,10 @@
 import graphene
-import graphene_django
 import graphql_jwt
 from graphql_jwt.shortcuts import create_refresh_token, get_token
 from django.contrib import auth
 
 import comments.schema
-
-class UserType(graphene_django.DjangoObjectType):
-    class Meta:
-        model = auth.get_user_model()
-        fields = (
-            'id',
-            'username'
-        )
+from .types import UserType
 
 class ObtainJSONWebToken(graphql_jwt.JSONWebTokenMutation):
     user = graphene.Field(UserType)

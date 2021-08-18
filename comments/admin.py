@@ -30,7 +30,7 @@ class PageAdmin(admin.ModelAdmin):
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ("page_link", "author_link", "text", "date_created")
+    list_display = ("page_link", "author_link", "text", "date_created", "deleted")
     list_display_links = ("text", "date_created")
 
     def page_link(self, obj):

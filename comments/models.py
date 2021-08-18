@@ -53,6 +53,10 @@ class Comment(models.Model):
         blank=True
     )
 
+    deleted = models.BooleanField(
+        verbose_name=_('Deleted'),
+        default=False)
+
     def __str__(self) -> str:
         return _('From %(user)s, %(date)s') % {
             'user': self.author,
