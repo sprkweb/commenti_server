@@ -2,12 +2,23 @@ import graphene
 from graphene import relay
 import graphene_django
 from graphql_relay import from_global_id
-from django.core.exceptions import ValidationError, PermissionDenied
+from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
+from commenti_server.utils import authenticated_users_only
 import comments.settings
 from comments.models import Comment
 from comments.types import CommentNode
+
+def get_comment_by_global_id(id, **kwargs):
+    pk_type, pk = from_global_id(id)
+    if not pk_type == 'CommentNode':
+        raise ValidationError(
+            _('Invalid type of ID: %(type)s'),
+            code='invalid',
+            params={'type': pk_type},
+        )
+    return Comment.objects.get(pk=pk, **kwargs)
 
 class WriteComment(relay.ClientIDMutation):
     class Input:
@@ -18,27 +29,16 @@ class WriteComment(relay.ClientIDMutation):
     comment = graphene.Field(CommentNode)
 
     @classmethod
+    @authenticated_users_only # TODO: anonymous comments support
     def mutate_and_get_payload(cls, root, info, text, page, parent = None):
         author = info.context.user
-        if not author.is_authenticated:
-            # TODO: anonymous comments support
-            raise PermissionDenied(
-                _('You must be logged in to write a comment')
-            )
 
         if parent == None:
             parent_id = None
         else:
-            parent_type, parent_id = from_global_id(parent)
-            if not parent_type == 'CommentNode':
-                raise ValidationError(
-                    _('Invalid type of parent ID: %(type)s'),
-                    code='invalid',
-                    params={'type': parent_type},
-                )
             # Parent comment must be on the same page
             # otherwise, Django raises a DoesNotExist exception
-            Comment.objects.get(pk=parent_id, page_id=page)
+            get_comment_by_global_id(id, page_id=page)
 
         new_comment = Comment(
             text=text,
@@ -55,32 +55,34 @@ class DeleteComment(relay.ClientIDMutation):
     success = graphene.Boolean()
 
     @classmethod
+    @authenticated_users_only
     def mutate_and_get_payload(cls, root, info, id):
         author = info.context.user
-        if not author.is_authenticated:
-            # TODO: anonymous comments support
-            raise PermissionDenied(
-                _('You must be logged in to delete a comment')
-            )
-
-        pk_type, pk = from_global_id(id)
-        if not pk_type == 'CommentNode':
-            raise ValidationError(
-                _('Invalid type of ID: %(type)s'),
-                code='invalid',
-                params={'type': pk_type},
-            )
-
-        comment = Comment.objects.get(pk=pk, author=author)
+        comment = get_comment_by_global_id(id, author=author)
         comment.deleted = True
         comment.save()
-
         return DeleteComment(success=True)
+
+class EditComment(relay.ClientIDMutation):
+    class Input:
+        id = graphene.ID()
+        text = graphene.String(required=True)
+
+    success = graphene.Boolean()
+
+    @classmethod
+    @authenticated_users_only
+    def mutate_and_get_payload(cls, root, info, id, text):
+        author = info.context.user
+        comment = get_comment_by_global_id(id, author=author)
+        comment.text = text
+        comment.save()
+        return EditComment(success=True)
 
 class Mutation(graphene.ObjectType):
     write_comment = WriteComment.Field()
-    # if comments.settings.COMMENTI_ALLOW_EDIT:
-    #   edit_comment = EditComment.Field()
+    if comments.settings.COMMENTI_ALLOW_EDIT:
+        edit_comment = EditComment.Field()
     if comments.settings.COMMENTI_ALLOW_DELETE:
         delete_comment = DeleteComment.Field()
 
