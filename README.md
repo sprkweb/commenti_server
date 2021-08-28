@@ -25,11 +25,13 @@ The easiest way to set this up is using docker-compose, which starts the back-en
 
 ### Option 2: Container
 
-This option is the best in case if you want, for example, to use Commenti alongside with an existing database server and an HTTP server with your own configuration.
+This option is the best in case if you want to use Commenti alongside with an existing database server and an HTTP server with your own configuration.
 
-[Container registry →](https://github.com/sprkweb/commenti_server/pkgs/container/commenti_server)
+Download the Commenti container image from [the container registry](https://github.com/sprkweb/commenti_server/pkgs/container/commenti_server) and use it the way you would like.
 
 See [docker-compose.yml](https://github.com/sprkweb/commenti_server/blob/master/docker-compose.yml) for a configuration example (volumes, environment, etc).
+
+For example, in case you want to use HTTPS for your comments, you can follow the steps from Option 1, except that you need to configure [nginx](https://github.com/sprkweb/commenti_server/blob/master/nginx.conf) to use your SSL certificate.
 
 ### Option 3: Without containers
 
