@@ -24,7 +24,8 @@ class Comment(models.Model):
         verbose_name=_('Author'),
         on_delete=models.SET_NULL,
         related_name='comments',
-        null=True)
+        null=True,
+        blank=True)
 
     date_created = models.DateTimeField(
         _('Created'),
@@ -58,10 +59,7 @@ class Comment(models.Model):
         default=False)
 
     def __str__(self) -> str:
-        return _('From %(user)s, %(date)s') % {
-            'user': self.author,
-            'date': self.date_created
-        }
+        return self.text
 
     class Meta:
         verbose_name = _('Comment')

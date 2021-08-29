@@ -41,6 +41,9 @@ class CommentAdmin(admin.ModelAdmin):
 
     def author_link(self, obj):
         author = obj.author
-        url = reverse("admin:auth_user_change", args=(author.id, ))
-        return html.format_html('<a href="{}">{}</a>', url, str(author))
+        if author == None:
+            return _('Anonymous')
+        else:
+            url = reverse("admin:auth_user_change", args=(author.id, ))
+            return html.format_html('<a href="{}">{}</a>', url, str(author))
     author_link.short_description = _('Author')

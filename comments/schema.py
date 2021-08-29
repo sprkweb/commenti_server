@@ -2,7 +2,7 @@ import graphene
 from graphene import relay
 import graphene_django
 from graphql_relay import from_global_id
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.utils.translation import gettext_lazy as _
 
 from commenti_server.utils import authenticated_users_only
@@ -29,16 +29,22 @@ class WriteComment(relay.ClientIDMutation):
     comment = graphene.Field(CommentNode)
 
     @classmethod
-    @authenticated_users_only # TODO: anonymous comments support
     def mutate_and_get_payload(cls, root, info, text, page, parent = None):
         author = info.context.user
+        if not author.is_authenticated:
+            if comments.settings.COMMENTI_ALLOW_ANONYMOUS:
+                author = None
+            else:
+                raise PermissionDenied(
+                    _('You must be logged in')
+                )
 
         if parent == None:
             parent_id = None
         else:
             # Parent comment must be on the same page
             # otherwise, Django raises a DoesNotExist exception
-            get_comment_by_global_id(id, page_id=page)
+            parent_id = get_comment_by_global_id(parent, page_id=page).pk
 
         new_comment = Comment(
             text=text,
