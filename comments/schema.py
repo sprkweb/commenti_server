@@ -85,6 +85,19 @@ class EditComment(relay.ClientIDMutation):
         comment.save()
         return EditComment(success=True)
 
+class CommentiSettings(graphene.ObjectType):
+    allow_edit = graphene.Boolean()
+    def resolve_allow_edit(root, info):
+        return comments.settings.COMMENTI_ALLOW_EDIT
+
+    allow_delete = graphene.Boolean()
+    def resolve_allow_delete(root, info):
+        return comments.settings.COMMENTI_ALLOW_DELETE
+
+    allow_anonymous = graphene.Boolean()
+    def resolve_allow_anonymous(root, info):
+        return comments.settings.COMMENTI_ALLOW_ANONYMOUS
+
 class Mutation(graphene.ObjectType):
     write_comment = WriteComment.Field()
     if comments.settings.COMMENTI_ALLOW_EDIT:
@@ -98,3 +111,7 @@ class Query(graphene.ObjectType):
     comments = graphene_django.DjangoConnectionField(CommentNode, page=graphene.String())
     def resolve_comments(root, info, page, **args):
         return Comment.objects.filter(page=page, parent=None)
+
+    settings = graphene.Field(CommentiSettings)
+    def resolve_settings(root, info):
+        return {}
